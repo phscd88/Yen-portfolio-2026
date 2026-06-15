@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, useRef, useEffect, ReactNode } from "react";
+import React, { useState, useRef, useEffect, ReactNode } from "react";
 // @ts-ignore
 import profilePng from "../profile.png";
 import { motion, AnimatePresence, useScroll, useSpring } from "motion/react";
@@ -24,8 +24,6 @@ import {
   BarChart3,
   Layers,
   CheckCircle2,
-  Image,
-  CloudUpload,
   Lock,
   X
 } from "lucide-react";
@@ -297,39 +295,6 @@ export default function App() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
 
-  // Live avatar selection state for testing/cooperation preview
-  const [avatarUrl, setAvatarUrl] = useState<string>(profilePng || "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    // Attempt to load previously saved avatar from localStorage
-    const saved = localStorage.getItem("portfolio_user_avatar");
-    if (saved) {
-      setAvatarUrl(saved);
-    } else if (profilePng) {
-      setAvatarUrl(profilePng);
-    }
-  }, []);
-
-  const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === "string") {
-          setAvatarUrl(reader.result);
-          localStorage.setItem("portfolio_user_avatar", reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const resetAvatar = () => {
-    localStorage.removeItem("portfolio_user_avatar");
-    setAvatarUrl(profilePng || "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800");
-  };
-
   const triggerCopy = (text: string, type: "email" | "phone") => {
     navigator.clipboard.writeText(text);
     if (type === "email") {
@@ -451,7 +416,7 @@ export default function App() {
             </motion.div>
           </div>
 
-          {/* Interactive Profile Photo Right */}
+          {/* Profile Photo Right */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center order-1 lg:order-2">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
@@ -460,45 +425,15 @@ export default function App() {
               className="relative w-72 h-72 sm:w-96 sm:h-96 rounded-full overflow-hidden border-4 border-white shadow-2xl bg-brand-accent/5 group"
             >
               <img 
-                src={avatarUrl} 
+                src={profilePng || "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800"} 
                 alt="Yen Chih-Yi Headshot" 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-brand-ink/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white p-6 text-center">
-                <CloudUpload className="w-8 h-8 mb-2 animate-bounce text-brand-cream" />
-                <p className="text-sm font-medium">想要預覽您合適的大頭貼照？</p>
-                <p className="text-xs opacity-75 mt-1">點選下方按鈕即可於本站即時換上測試</p>
-              </div>
               
               {/* Modern elegant frame indicator */}
               <div className="absolute inset-4 rounded-full border border-white/20 pointer-events-none" />
             </motion.div>
-
-            {/* Client-Side Live Image Changer Widget */}
-            <div className="mt-4 flex gap-3 text-xs">
-              <button 
-                onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-1 text-brand-accent hover:text-brand-ink font-medium tracking-wide transition-colors bg-white hover:bg-brand-cream px-3 py-1.5 rounded-full border border-brand-accent/20"
-              >
-                <Image className="w-3.5 h-3.5" /> 換上您的帥氣大頭貼
-              </button>
-              {localStorage.getItem("portfolio_user_avatar") && (
-                <button 
-                  onClick={resetAvatar}
-                  className="text-brand-ink/50 hover:text-brand-ink underline"
-                >
-                  恢復預設
-                </button>
-              )}
-              <input 
-                ref={fileInputRef}
-                type="file" 
-                accept="image/*" 
-                onChange={handleAvatarChange} 
-                className="hidden" 
-              />
-            </div>
           </div>
 
         </div>
